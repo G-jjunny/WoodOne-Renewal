@@ -1,0 +1,37 @@
+# <type>(<scope>): <subject>
+# │       │          └─ 명령형 현재 시제, 50자 이내, 마침표 없음
+# │       └─ 선택사항: 변경된 FSD 레이어 또는 도메인
+# └─ feat|fix|chore|docs|style|refactor|perf|test
+#
+# ─────────────────────────────────────────────────────────────────
+# [본문 — 선택사항, 72자 줄바꿈]
+# 무엇을 왜 변경했는지 설명합니다. 어떻게는 코드가 설명합니다.
+#
+#
+# ─────────────────────────────────────────────────────────────────
+# [푸터 — 선택사항]
+# 관련 이슈: Closes #이슈번호 / Refs #이슈번호
+# Breaking Change: BREAKING CHANGE: 설명
+#
+# ─────────────────────────────────────────────────────────────────
+#
+# [type 목록]
+#   feat     새로운 기능 추가
+#   fix      버그 수정
+#   chore    빌드, 패키지, 설정 변경 (코드 변경 없음)
+#   docs     문서 수정 (CLAUDE.md, README 등)
+#   style    코드 포매팅, 세미콜론 등 (로직 변경 없음)
+#   refactor 기능 변경 없는 코드 리팩토링
+#   perf     성능 개선
+#   test     테스트 코드 추가/수정
+#
+# [scope 예시 — FSD 레이어 또는 도메인]
+#   app, widgets, features, entities, shared
+#   product, header, footer, hero, contact
+#   seo, image, a11y, deps
+#
+# [예시]
+#   feat(widgets): HeroSection 컴포넌트 구현
+#   fix(entities/product): ProductCard 이미지 alt 누락 수정
+#   perf(shared): next/image sizes 속성 최적화
+#   chore(deps): shadcn Button 컴포넌트 추가

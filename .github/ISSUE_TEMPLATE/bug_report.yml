@@ -1,0 +1,89 @@
+name: 버그 리포트
+description: 버그를 발견하셨나요? 내용을 상세히 작성해 주세요.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        버그 리포트를 작성해 주셔서 감사합니다. 재현에 필요한 정보를 최대한 상세히 작성해 주세요.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 버그 설명
+      description: 어떤 문제가 발생했는지 명확하게 설명해 주세요.
+      placeholder: 예) 제품 목록 페이지에서 필터 적용 시 페이지가 빈 화면으로 렌더링됩니다.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 재현 절차
+      description: 버그를 재현하는 단계를 순서대로 작성해 주세요.
+      placeholder: |
+        1. '/products' 페이지로 이동
+        2. '원목마루' 카테고리 필터 클릭
+        3. 페이지 빈 화면 발생
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 기대 동작
+      description: 정상적으로 동작했다면 어떤 결과가 나와야 하는지 작성해 주세요.
+      placeholder: 예) 원목마루 카테고리에 해당하는 제품 목록이 필터링되어 표시되어야 합니다.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: 실제 동작
+      description: 실제로 어떤 결과가 나왔는지 작성해 주세요. 스크린샷이나 에러 메시지를 첨부하면 도움이 됩니다.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: 환경
+      description: 버그가 발생한 환경을 선택해 주세요.
+      multiple: true
+      options:
+        - Chrome
+        - Firefox
+        - Safari
+        - Edge
+        - 모바일 (iOS)
+        - 모바일 (Android)
+    validations:
+      required: true
+
+  - type: input
+    id: url
+    attributes:
+      label: 발생 URL
+      description: 버그가 발생한 페이지 URL을 입력해 주세요.
+      placeholder: 예) /products, /products/oak-floor-001
+
+  - type: dropdown
+    id: fsd-layer
+    attributes:
+      label: 관련 FSD 레이어 (개발자용)
+      description: 버그가 발생한 것으로 추정되는 레이어를 선택해 주세요.
+      options:
+        - app (라우팅/레이아웃)
+        - widgets (페이지 섹션)
+        - features (비즈니스 기능)
+        - entities (도메인 모델)
+        - shared (공통 유틸리티)
+        - 모름
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: 추가 정보
+      description: 콘솔 에러, 네트워크 로그 등 추가적인 정보를 작성해 주세요.
