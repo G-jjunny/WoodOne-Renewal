@@ -1,26 +1,287 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* ============================================================
+   우드원 브랜드 디자인 시스템 — Light Mode 전용
+   컬러 전략: 원목/자연 소재의 따뜻함을 OKLCH로 표현
+   - Wood Brown: L≈0.42, C≈0.07, H≈52 (원목 브라운, primary)
+   - Cream:      L≈0.97, C≈0.01, H≈85  (크림 화이트, background)
+   - Beige:      L≈0.93, C≈0.02, H≈80  (베이지, card/secondary)
+   - Sand:       L≈0.88, C≈0.03, H≈78  (샌드, border/muted)
+   - Charcoal:   L≈0.22, C≈0.02, H≈55  (차콜, foreground)
+   ============================================================ */
+
+/* dark mode 클래스 선택자 제거 — woodone은 light mode 전용 */
+@custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* === shadcn/ui 기본 시맨틱 토큰 오버라이드 === */
+
+  /* 배경: 순수 흰색이 아닌 따뜻한 크림 톤 */
+  --background: oklch(0.97 0.008 85);
+  --foreground: oklch(0.22 0.018 52);
+
+  /* 반지름: 브랜드는 절제된 느낌 — 기본 0.375rem */
+  --radius: 0.375rem;
+
+  /* 카드: 베이지 계열로 따뜻함 강조 */
+  --card: oklch(0.99 0.004 85);
+  --card-foreground: oklch(0.22 0.018 52);
+
+  /* 팝오버 */
+  --popover: oklch(0.99 0.004 85);
+  --popover-foreground: oklch(0.22 0.018 52);
+
+  /* Primary: 깊은 원목 브라운 — 브랜드 핵심 컬러 */
+  --primary: oklch(0.42 0.072 52);
+  --primary-foreground: oklch(0.97 0.008 85);
+
+  /* Secondary: 중간 베이지 — 보조 액션 */
+  --secondary: oklch(0.93 0.020 80);
+  --secondary-foreground: oklch(0.32 0.035 52);
+
+  /* Muted: 낮은 강조 텍스트/배경 */
+  --muted: oklch(0.93 0.020 80);
+  --muted-foreground: oklch(0.52 0.030 58);
+
+  /* Accent: 따뜻한 골드 계열 — 포인트 강조 */
+  --accent: oklch(0.88 0.035 78);
+  --accent-foreground: oklch(0.28 0.040 52);
+
+  /* 파괴적 액션: 오류/삭제 */
+  --destructive: oklch(0.577 0.245 27.325);
+
+  /* Border/Input: 샌드 계열 */
+  --border: oklch(0.88 0.020 78);
+  --input: oklch(0.91 0.016 80);
+  --ring: oklch(0.42 0.072 52);
+
+  /* 사이드바 (관리 페이지 대비) */
+  --sidebar: oklch(0.95 0.012 82);
+  --sidebar-foreground: oklch(0.22 0.018 52);
+  --sidebar-primary: oklch(0.42 0.072 52);
+  --sidebar-primary-foreground: oklch(0.97 0.008 85);
+  --sidebar-accent: oklch(0.90 0.025 78);
+  --sidebar-accent-foreground: oklch(0.28 0.040 52);
+  --sidebar-border: oklch(0.88 0.020 78);
+  --sidebar-ring: oklch(0.42 0.072 52);
+
+  /* ===================================================
+     우드원 브랜드 확장 토큰
+     네이밍 규칙: --wood-{semantic}-{modifier}
+     =================================================== */
+
+  /* 우드 브라운 스케일 — 원목 고유의 깊이 */
+  --wood-50:  oklch(0.97 0.008 85);   /* 가장 밝은 크림 */
+  --wood-100: oklch(0.95 0.012 82);
+  --wood-200: oklch(0.93 0.020 80);
+  --wood-300: oklch(0.88 0.030 78);
+  --wood-400: oklch(0.78 0.045 68);
+  --wood-500: oklch(0.65 0.060 58);
+  --wood-600: oklch(0.52 0.068 54);
+  --wood-700: oklch(0.42 0.072 52);   /* primary — 핵심 원목 브라운 */
+  --wood-800: oklch(0.32 0.055 50);
+  --wood-900: oklch(0.22 0.040 48);
+  --wood-950: oklch(0.15 0.025 45);
+
+  /* 내추럴 그린 계열 — 숲/자연 연상 포인트 */
+  --natural-light: oklch(0.88 0.040 135);
+  --natural-mid:   oklch(0.62 0.100 140);
+  --natural-deep:  oklch(0.38 0.090 145);
+
+  /* 시맨틱 스페이싱 토큰 — 8px 그리드 기반 */
+  --spacing-xs:      0.25rem;    /* 4px  — 마이크로 간격 */
+  --spacing-sm:      0.5rem;     /* 8px  — 소형 간격 */
+  --spacing-md:      1rem;       /* 16px — 기본 간격 */
+  --spacing-lg:      1.5rem;     /* 24px — 컴포넌트 간격 */
+  --spacing-xl:      2rem;       /* 32px — 섹션 내부 간격 */
+  --spacing-2xl:     3rem;       /* 48px — 섹션 간격 */
+  --spacing-3xl:     4rem;       /* 64px — 주요 섹션 */
+  --spacing-section: 6rem;       /* 96px — 페이지 섹션 여백 */
+  --spacing-hero:    8rem;       /* 128px — 히어로 영역 */
+
+  /* 그림자 시스템 — 원목 브라운 기반의 따뜻한 그림자 */
+  --shadow-xs:  0 1px 2px 0 oklch(0.22 0.018 52 / 0.06);
+  --shadow-sm:  0 1px 3px 0 oklch(0.22 0.018 52 / 0.08), 0 1px 2px -1px oklch(0.22 0.018 52 / 0.08);
+  --shadow-md:  0 4px 6px -1px oklch(0.22 0.018 52 / 0.08), 0 2px 4px -2px oklch(0.22 0.018 52 / 0.06);
+  --shadow-lg:  0 10px 15px -3px oklch(0.22 0.018 52 / 0.08), 0 4px 6px -4px oklch(0.22 0.018 52 / 0.06);
+  --shadow-xl:  0 20px 25px -5px oklch(0.22 0.018 52 / 0.10), 0 8px 10px -6px oklch(0.22 0.018 52 / 0.08);
+
+  /* 타이포그래피 스케일 (fluid) */
+  --text-display:  clamp(2.5rem, 5vw + 1rem, 4.5rem);    /* 메인 히어로 타이틀 */
+  --text-h1:       clamp(2rem,   3vw + 1rem, 3.5rem);     /* 페이지 제목 */
+  --text-h2:       clamp(1.5rem, 2vw + 0.75rem, 2.5rem);  /* 섹션 제목 */
+  --text-h3:       clamp(1.25rem, 1.5vw + 0.5rem, 1.75rem);
+  --text-h4:       clamp(1.125rem, 1vw + 0.5rem, 1.375rem);
+  --text-body-lg:  1.125rem;   /* 18px — 리드 카피 */
+  --text-body:     1rem;       /* 16px — 본문 */
+  --text-body-sm:  0.9375rem;  /* 15px — 보조 본문 */
+  --text-caption:  0.875rem;   /* 14px — 캡션 */
+  --text-label:    0.8125rem;  /* 13px — 레이블 */
+  --text-overline: 0.75rem;    /* 12px — 오버라인 (대문자 사용) */
+
+  /* 자간 */
+  --tracking-tight:  -0.025em;
+  --tracking-normal: -0.011em;   /* 한국어 기본 자간 */
+  --tracking-wide:    0.05em;
+  --tracking-widest:  0.15em;    /* 오버라인용 */
+
+  /* 줄높이 */
+  --leading-tight:  1.25;
+  --leading-snug:   1.375;
+  --leading-normal: 1.6;         /* 한국어 본문 적정 줄높이 */
+  --leading-relaxed: 1.75;
+  --leading-loose:  2.0;
 }
 
+/* ============================================================
+   Tailwind v4 @theme 인라인 매핑
+   CSS 변수를 Tailwind 유틸리티로 노출
+   ============================================================ */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* shadcn 시맨틱 컬러 매핑 */
+  --color-background:               var(--background);
+  --color-foreground:               var(--foreground);
+  --color-card:                     var(--card);
+  --color-card-foreground:          var(--card-foreground);
+  --color-popover:                  var(--popover);
+  --color-popover-foreground:       var(--popover-foreground);
+  --color-primary:                  var(--primary);
+  --color-primary-foreground:       var(--primary-foreground);
+  --color-secondary:                var(--secondary);
+  --color-secondary-foreground:     var(--secondary-foreground);
+  --color-muted:                    var(--muted);
+  --color-muted-foreground:         var(--muted-foreground);
+  --color-accent:                   var(--accent);
+  --color-accent-foreground:        var(--accent-foreground);
+  --color-destructive:              var(--destructive);
+  --color-border:                   var(--border);
+  --color-input:                    var(--input);
+  --color-ring:                     var(--ring);
+
+  /* 사이드바 컬러 */
+  --color-sidebar:                  var(--sidebar);
+  --color-sidebar-foreground:       var(--sidebar-foreground);
+  --color-sidebar-primary:          var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent:           var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border:           var(--sidebar-border);
+  --color-sidebar-ring:             var(--sidebar-ring);
+
+  /* 우드 브랜드 컬러 스케일 — bg-wood-700, text-wood-900 등으로 사용 */
+  --color-wood-50:  var(--wood-50);
+  --color-wood-100: var(--wood-100);
+  --color-wood-200: var(--wood-200);
+  --color-wood-300: var(--wood-300);
+  --color-wood-400: var(--wood-400);
+  --color-wood-500: var(--wood-500);
+  --color-wood-600: var(--wood-600);
+  --color-wood-700: var(--wood-700);
+  --color-wood-800: var(--wood-800);
+  --color-wood-900: var(--wood-900);
+  --color-wood-950: var(--wood-950);
+
+  /* 내추럴 그린 */
+  --color-natural-light: var(--natural-light);
+  --color-natural-mid:   var(--natural-mid);
+  --color-natural-deep:  var(--natural-deep);
+
+  /* 반지름 스케일 */
+  --radius-sm:  calc(var(--radius) - 2px);
+  --radius-md:  var(--radius);
+  --radius-lg:  calc(var(--radius) + 2px);
+  --radius-xl:  calc(var(--radius) + 6px);
+  --radius-2xl: calc(var(--radius) + 10px);
+  --radius-3xl: calc(var(--radius) + 16px);
+
+  /* 폰트 패밀리 — CDN 로드된 Pretendard + layout.tsx의 CSS 변수 연결 */
+  --font-sans:    "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-serif:   var(--font-noto-serif-kr), "Noto Serif KR", Georgia, serif;
+  --font-mono:    ui-monospace, "Cascadia Code", monospace;
+
+  /* 그림자 */
+  --shadow-xs: var(--shadow-xs);
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-xl: var(--shadow-xl);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ============================================================
+   기본 레이어 스타일
+   ============================================================ */
+@layer base {
+  /* 전역 박스 리셋 — border 컬러 일관성 */
+  * {
+    @apply border-border outline-ring/50;
+    box-sizing: border-box;
+  }
+
+  html {
+    /* 스크롤 부드럽게 — 앵커 이동 시 */
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    /* 한국어 텍스트 렌더링 최적화 */
+    font-feature-settings: "kern" 1;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* 한국어 줄바꿈 최적화 */
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    line-height: var(--leading-normal);
+    letter-spacing: var(--tracking-normal);
+  }
+
+  /* 헤딩 공통 스타일 */
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-foreground font-semibold;
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
+    word-break: keep-all;
+  }
+
+  h1 { font-size: var(--text-h1); }
+  h2 { font-size: var(--text-h2); }
+  h3 { font-size: var(--text-h3); }
+  h4 { font-size: var(--text-h4); }
+
+  /* 링크 기본 스타일 */
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* 이미지 기본 처리 */
+  img, video {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* 포커스 링 — 접근성 & 브랜드 일관성 */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ============================================================
+   동작 접근성 — prefers-reduced-motion
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
