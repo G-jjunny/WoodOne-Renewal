@@ -21,8 +21,8 @@ export function HeroSection() {
     <section
       aria-labelledby="hero-heading"
       className={cn(
-        "relative min-h-[92vh] flex items-center",
-        // 배경: 에스프레소 950 오프블랙 — 원목 사진 입고 후 next/image로 교체
+        // h-dvh: 정확히 뷰포트 높이. flex-col로 내부 콘텐츠를 위아래로 분배
+        "relative h-dvh flex flex-col",
         "bg-espresso-950",
         "overflow-hidden"
       )}
@@ -50,11 +50,18 @@ export function HeroSection() {
         }}
       />
 
-      <Container className="relative z-10 section-padding-hero">
-        <div className="max-w-2xl">
+      {/*
+        flex-1: 헤더 아래 남은 공간 전체를 차지
+        flex flex-col justify-between: 메인 콘텐츠(상단)와 통계(하단)를 양끝 배치
+        pt-24: 고정 헤더 높이 오프셋 / pb-16: 스크롤 인디케이터 공간 확보
+      */}
+      <Container className="relative z-10 flex-1 flex flex-col justify-between pt-24 pb-16">
 
-          {/* SINCE 배지 — 브라스 골드 테두리, 이 페이지에서 단 한 번 사용 */}
-          <div className="badge-brand mb-12">
+        {/* 메인 콘텐츠 — 뷰포트 중앙에서 자연스럽게 시작 */}
+        <div className="max-w-2xl flex flex-col justify-center flex-1">
+
+          {/* SINCE 배지 */}
+          <div className="badge-brand mb-6">
             <span
               aria-hidden="true"
               style={{
@@ -75,7 +82,7 @@ export function HeroSection() {
             className={cn(
               "font-serif font-light",
               "text-espresso-50",
-              "mb-8"
+              "mb-5"
             )}
             style={{
               fontSize: "var(--text-display)",
@@ -85,26 +92,21 @@ export function HeroSection() {
           >
             원목이 만드는
             <br />
-            <span
-              style={{ color: "var(--espresso-300)" }}
-            >
+            <span style={{ color: "var(--espresso-300)" }}>
               특별한 공간
             </span>
           </h1>
 
-          {/* 브라스 구분선 — 제목과 본문 사이 */}
+          {/* 브라스 구분선 */}
           <div
             className="section-divider"
             aria-hidden="true"
-            style={{ marginBottom: "2rem" }}
+            style={{ marginBottom: "1.25rem" }}
           />
 
           {/* 서브 카피 */}
           <p
-            className={cn(
-              "text-neutral-400 leading-relaxed mb-12",
-              "max-w-md"
-            )}
+            className="text-neutral-400 max-w-md mb-8"
             style={{
               fontSize: "var(--text-body-lg)",
               lineHeight: "var(--leading-relaxed)",
@@ -117,18 +119,11 @@ export function HeroSection() {
 
           {/* CTA 버튼 그룹 */}
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <Link
-              href="/contact"
-              className="btn-primary"
-            >
+            <Link href="/contact" className="btn-primary">
               무료 상담 문의
             </Link>
-            <Link
-              href="/products"
-              className="btn-ghost-light"
-            >
+            <Link href="/products" className="btn-ghost-light">
               제품 갤러리
-              {/* 화살표 아이콘 — 얇은 선으로 절제 */}
               <svg
                 className="ml-2 w-3.5 h-3.5"
                 fill="none"
@@ -141,68 +136,59 @@ export function HeroSection() {
               </svg>
             </Link>
           </div>
+        </div>
 
-          {/* 하단 통계 — 수직 파이프 구분 */}
-          <div
-            className="mt-20 flex items-start gap-0"
-            style={{ borderTop: "1px solid oklch(0.28 0.055 45 / 0.4)", paddingTop: "2rem" }}
-          >
-            {[
-              { value: "30+", label: "Years" },
-              { value: "100+", label: "Samples" },
-              { value: "2", label: "Brands" },
-            ].map(({ value, label }, index) => (
-              <div
-                key={label}
-                className="flex flex-col gap-1 pr-8"
-                style={
-                  index !== 0
-                    ? {
-                        paddingLeft: "2rem",
-                        borderLeft: "1px solid oklch(0.28 0.055 45 / 0.35)",
-                      }
-                    : undefined
-                }
+        {/* 하단 통계 — justify-between의 끝점에 배치, 항상 뷰포트 안에 표시됨 */}
+        <div
+          className="max-w-2xl flex items-start gap-0"
+          style={{ borderTop: "1px solid oklch(0.28 0.055 45 / 0.4)", paddingTop: "1.5rem" }}
+        >
+          {[
+            { value: "30+", label: "Years" },
+            { value: "100+", label: "Samples" },
+            { value: "2", label: "Brands" },
+          ].map(({ value, label }, index) => (
+            <div
+              key={label}
+              className="flex flex-col gap-1 pr-8"
+              style={
+                index !== 0
+                  ? { paddingLeft: "2rem", borderLeft: "1px solid oklch(0.28 0.055 45 / 0.35)" }
+                  : undefined
+              }
+            >
+              <span
+                className="font-serif font-light text-espresso-100"
+                style={{ fontSize: "clamp(1.5rem, 2.5vw, 2rem)", lineHeight: 1 }}
               >
-                <span
-                  className="font-serif font-light text-espresso-100"
-                  style={{ fontSize: "clamp(1.75rem, 3vw, 2.25rem)", lineHeight: 1 }}
-                >
-                  {value}
-                </span>
-                <span
-                  className="font-medium uppercase text-neutral-600"
-                  style={{
-                    fontSize: "var(--text-overline)",
-                    letterSpacing: "var(--tracking-widest)",
-                  }}
-                >
-                  {label}
-                </span>
-              </div>
-            ))}
-          </div>
+                {value}
+              </span>
+              <span
+                className="font-medium uppercase text-neutral-600"
+                style={{ fontSize: "var(--text-overline)", letterSpacing: "var(--tracking-widest)" }}
+              >
+                {label}
+              </span>
+            </div>
+          ))}
         </div>
       </Container>
 
-      {/* 스크롤 인디케이터 */}
+      {/* 스크롤 인디케이터 — pb-16 공간 내 absolute 배치 */}
       <div
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
         aria-hidden="true"
       >
         <span
           className="font-medium uppercase text-neutral-700"
-          style={{
-            fontSize: "var(--text-overline)",
-            letterSpacing: "var(--tracking-widest)",
-          }}
+          style={{ fontSize: "var(--text-overline)", letterSpacing: "var(--tracking-widest)" }}
         >
           Scroll
         </span>
         <div
           style={{
             width: "1px",
-            height: "3rem",
+            height: "2.5rem",
             background: `linear-gradient(to bottom, var(--neutral-700), transparent)`,
           }}
         />
