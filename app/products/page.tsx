@@ -1,24 +1,30 @@
 /**
- * 제품 목록 페이지 (/products)
- *
- * SEO 전략:
- *   - title: "제품 소개 | 우드원" — layout template 적용
- *   - description: 카테고리 키워드(원목마루, 강마루, 강화마루)를 자연스럽게 포함
- *   - canonical: /products (필터/정렬 파라미터가 붙더라도 클린 URL 가리킴)
- *   - BreadcrumbList: 홈 > 제품 소개
+ * 갤러리 페이지 (/products)
  *
  * RSC: 서버 컴포넌트
+ * 제품 데이터는 서버에서 로드하여 Client Component(ProductGrid)에 props로 전달
+ *
+ * SEO:
+ *   - BreadcrumbList: 홈 > 갤러리
+ *   - canonical: /products
  */
 
 import type { Metadata } from "next";
 import { siteConfig } from "@/shared/config/site";
 import { JsonLd } from "@/shared/ui/json-ld";
 import { createBreadcrumbSchema } from "@/shared/config/schema";
+import { Container } from "@/shared/ui/container";
+import { ProductGrid } from "@/widgets/product-catalog";
+import {
+  greenForestProducts,
+  toProductSummary,
+  GREEN_FOREST_SIZE_CATEGORIES,
+} from "@/entities/product";
 
 export const metadata: Metadata = {
-  title: "제품 소개",
+  title: "제품 갤러리",
   description:
-    "우드원의 원목마루, 강마루, 강화마루 제품 라인업을 확인하세요. 30년 노하우로 제조한 프리미엄 바닥재를 직접 비교하고 선택할 수 있습니다.",
+    "우드원 원목마루 갤러리. Green Forest 100가지 이상 샘플과 이탈리아 명품 Ideal Legno 제품을 확인하세요. 폭 90mm~220mm까지 다양한 사이즈와 색상을 비교할 수 있습니다.",
   alternates: {
     canonical: `${siteConfig.url}/products`,
     languages: {
@@ -28,43 +34,69 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: `${siteConfig.url}/products`,
-    title: "제품 소개 | 우드원",
+    title: "제품 갤러리 | 우드원",
     description:
-      "우드원의 원목마루, 강마루, 강화마루 제품 라인업을 확인하세요. 30년 노하우로 제조한 프리미엄 바닥재를 직접 비교하고 선택할 수 있습니다.",
+      "Green Forest 100가지 이상 원목마루 샘플. 폭 90mm~220mm 사이즈 필터로 원하는 제품을 찾아보세요.",
     images: [
       {
         url: siteConfig.ogImage,
         width: 1200,
         height: 630,
-        alt: "우드원 제품 소개",
+        alt: "우드원 제품 갤러리",
       },
     ],
   },
 };
 
-/* BreadcrumbList: 홈 > 제품 소개 */
 const breadcrumbSchema = createBreadcrumbSchema([
   { name: "홈", href: "/" },
-  { name: "제품 소개", href: "/products" },
+  { name: "제품 갤러리", href: "/products" },
 ]);
 
 export default function ProductsPage() {
+  // Server Component에서 데이터 준비 — Client Component에 직렬화 가능한 형태로 전달
+  const productSummaries = greenForestProducts.map(toProductSummary);
+
   return (
     <>
       <JsonLd schema={breadcrumbSchema} id="schema-breadcrumb-products" />
 
-      {/* 제품 목록 헤더 */}
-      <section aria-labelledby="products-page-heading">
-        <h1 id="products-page-heading">제품 소개</h1>
-        <p>
-          우드원의 프리미엄 바닥재 제품 라인업입니다. 원목마루, 강마루,
-          강화마루 중 공간과 용도에 맞는 제품을 선택하세요.
-        </p>
+      {/* 페이지 헤더 */}
+      <section
+        aria-labelledby="products-page-heading"
+        className="py-16 bg-espresso-950"
+      >
+        <Container>
+          <div className="max-w-2xl">
+            <p className="text-xs font-semibold tracking-[0.2em] uppercase text-espresso-400 mb-3">
+              Gallery
+            </p>
+            <h1
+              id="products-page-heading"
+              className="font-serif font-semibold text-espresso-50 mb-4"
+              style={{ fontSize: "clamp(1.75rem, 3vw + 0.5rem, 2.75rem)", lineHeight: 1.2 }}
+            >
+              제품 갤러리
+            </h1>
+            <p className="text-espresso-300 leading-relaxed" style={{ fontSize: "0.9375rem" }}>
+              Green Forest 100가지 이상의 원목마루 샘플과 이탈리아 명품 Ideal Legno 제품을 확인하세요.
+              사이즈별, 색상별로 원하는 제품을 찾아보실 수 있습니다.
+            </p>
+          </div>
+        </Container>
       </section>
 
-      {/* 제품 그리드 — 추후 <ProductGrid /> 위젯으로 교체 */}
-      <section aria-label="제품 목록">
-        {/* 제품 카드 컴포넌트로 채워질 영역 */}
+      {/* 제품 그리드 — 인터랙티브 필터 포함 */}
+      <section
+        aria-label="제품 목록"
+        className="py-16 bg-background"
+      >
+        <Container>
+          <ProductGrid
+            products={productSummaries}
+            sizeCategories={GREEN_FOREST_SIZE_CATEGORIES}
+          />
+        </Container>
       </section>
     </>
   );

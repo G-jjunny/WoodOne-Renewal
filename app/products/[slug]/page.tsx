@@ -1,68 +1,43 @@
 /**
  * 제품 상세 페이지 (/products/[slug])
  *
- * SEO 전략:
- *   - generateMetadata: 슬러그 기반으로 제품 데이터를 fetch하여 동적 메타 생성
- *   - notFound() 처리: 존재하지 않는 슬러그에 404 반환 (메타 누수 방지)
- *   - Product JSON-LD: 가격/재고 정보 포함 시 리치 결과 자격 획득
- *   - BreadcrumbList: 홈 > 제품 소개 > [제품명]
- *   - OG type: "website" 유지 (제품 상세이지만 og:type "product"는 표준 미지원)
- *
- * TODO: 실제 CMS/DB 연동 후 getProductBySlug 함수를 구현하세요.
- *
  * RSC: 서버 컴포넌트
+ * 데이터 소스: entities/product (Green Forest 목업 데이터)
+ *
+ * SEO:
+ *   - generateMetadata: 슬러그 기반 동적 메타
+ *   - Product JSON-LD
+ *   - BreadcrumbList: 홈 > 제품 갤러리 > [제품명]
+ *   - notFound(): 존재하지 않는 슬러그 처리
  */
 
 import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { siteConfig } from "@/shared/config/site";
 import { JsonLd } from "@/shared/ui/json-ld";
-import {
-  createProductSchema,
-  createBreadcrumbSchema,
-} from "@/shared/config/schema";
+import { Container } from "@/shared/ui/container";
+import { createProductSchema, createBreadcrumbSchema } from "@/shared/config/schema";
+import { getProductBySlug, greenForestProducts } from "@/entities/product";
+import { cn } from "@/shared/lib/utils";
 
-/* ============================================================
-   타입 정의
-   ============================================================ */
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
-/* ============================================================
-   임시 제품 데이터 (TODO: CMS/DB 연동으로 교체)
-   실제 데이터 소스가 연결되면 이 함수를 삭제하세요.
-   ============================================================ */
-interface Product {
-  slug: string;
-  name: string;
-  description: string;
-  images: string[];
-  category: string;
-  sku?: string;
-  price?: number;
-}
+const FINISH_LABEL: Record<string, string> = {
+  natural: "자연 무광",
+  glossy: "유광",
+  matte: "무광",
+  brushed: "브러시드",
+  oiled: "오일드",
+};
 
-async function getProductBySlug(slug: string): Promise<Product | null> {
-  // TODO: 실제 API/CMS 호출로 교체
-  // 예: const res = await fetch(`${process.env.API_URL}/products/${slug}`, { next: { revalidate: 3600 } });
-  // if (!res.ok) return null;
-  // return res.json();
-
-  // 현재는 존재하지 않는 제품은 null 반환 (404 처리)
-  void slug;
-  return null;
-}
-
-/* ============================================================
-   동적 메타데이터 생성
-   제품 데이터가 없으면 notFound()로 404 반환하여 메타 누수를 방지합니다.
-   ============================================================ */
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
+  const product = getProductBySlug(slug);
 
-  // 제품 없음: 검색 엔진에 404 신호 전달
   if (!product) {
     return {
       title: "제품을 찾을 수 없습니다",
@@ -71,7 +46,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const canonicalUrl = `${siteConfig.url}/products/${product.slug}`;
-  // description: 160자 제한 (SERP 스니펫 잘림 방지)
   const metaDescription = product.description.slice(0, 155);
 
   return {
@@ -79,67 +53,51 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: metaDescription,
     alternates: {
       canonical: canonicalUrl,
-      languages: {
-        "ko-KR": canonicalUrl,
-      },
+      languages: { "ko-KR": canonicalUrl },
     },
     openGraph: {
       type: "website",
       url: canonicalUrl,
       title: `${product.name} | 우드원`,
       description: metaDescription,
-      images: product.images.slice(0, 1).map((img) => ({
-        url: img,
-        width: 1200,
-        height: 630,
-        alt: `${product.name} — 우드원 ${product.category}`,
-      })),
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: `${product.name} | 우드원`,
-      description: metaDescription,
-      images: product.images.slice(0, 1),
+      images: [
+        {
+          url: product.images[0].src.startsWith("/")
+            ? `${siteConfig.url}${product.images[0].src}`
+            : product.images[0].src,
+          width: 800,
+          height: 600,
+          alt: product.images[0].alt,
+        },
+      ],
     },
   };
 }
 
-/* ============================================================
-   정적 경로 사전 생성 (빌드 타임 SSG)
-   TODO: CMS/DB에서 모든 슬러그를 가져와서 반환하세요.
-   ============================================================ */
 export async function generateStaticParams() {
-  // TODO: 실제 제품 슬러그 목록으로 교체
-  // const products = await getAllProductSlugs();
-  // return products.map((p) => ({ slug: p.slug }));
-  return [];
+  return greenForestProducts.map((p) => ({ slug: p.slug }));
 }
 
-/* ============================================================
-   제품 상세 페이지 컴포넌트
-   ============================================================ */
 export default async function ProductDetailPage({ params }: Props) {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
+  const product = getProductBySlug(slug);
 
-  if (!product) {
-    notFound();
-  }
+  if (!product) notFound();
 
-  /* Product + BreadcrumbList JSON-LD */
   const productSchema = createProductSchema({
     name: product.name,
     description: product.description,
-    images: product.images,
+    images: product.images.map((img) =>
+      img.src.startsWith("/") ? `${siteConfig.url}${img.src}` : img.src
+    ),
     slug: product.slug,
-    category: product.category,
-    sku: product.sku,
-    price: product.price,
+    category: "원목마루",
+    sku: product.id,
   });
 
   const breadcrumbSchema = createBreadcrumbSchema([
     { name: "홈", href: "/" },
-    { name: "제품 소개", href: "/products" },
+    { name: "제품 갤러리", href: "/products" },
     { name: product.name, href: `/products/${product.slug}` },
   ]);
 
@@ -148,10 +106,125 @@ export default async function ProductDetailPage({ params }: Props) {
       <JsonLd schema={productSchema} id="schema-product" />
       <JsonLd schema={breadcrumbSchema} id="schema-breadcrumb-product-detail" />
 
-      {/* 제품 상세 콘텐츠 — 추후 <ProductDetail /> 위젯으로 교체 */}
-      <article aria-labelledby="product-heading">
-        <h1 id="product-heading">{product.name}</h1>
-        <p>{product.description}</p>
+      {/* 페이지 헤더 */}
+      <div className="bg-espresso-950 py-12">
+        <Container>
+          {/* 브레드크럼 */}
+          <nav aria-label="브레드크럼" className="flex items-center gap-2 text-xs text-espresso-500 mb-6">
+            <Link href="/" className="hover:text-espresso-300 transition-colors duration-150">홈</Link>
+            <span aria-hidden="true">/</span>
+            <Link href="/products" className="hover:text-espresso-300 transition-colors duration-150">제품 갤러리</Link>
+            <span aria-hidden="true">/</span>
+            <span className="text-espresso-300">{product.name}</span>
+          </nav>
+        </Container>
+      </div>
+
+      {/* 제품 상세 */}
+      <article aria-labelledby="product-heading" className="py-16 bg-background">
+        <Container>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+
+            {/* 이미지 */}
+            <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-espresso-100">
+              <Image
+                src={product.images[0].src}
+                alt={product.images[0].alt}
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover"
+                priority
+              />
+            </div>
+
+            {/* 정보 */}
+            <div>
+              {/* 배지 */}
+              <div className="flex gap-2 mb-4">
+                {product.isNew && (
+                  <span className="px-2 py-0.5 rounded bg-espresso-700 text-espresso-50 text-xs font-semibold">NEW</span>
+                )}
+                {product.isBestSeller && (
+                  <span className="px-2 py-0.5 rounded bg-espresso-400 text-espresso-950 text-xs font-semibold">BEST</span>
+                )}
+              </div>
+
+              <p className="text-xs font-semibold tracking-[0.2em] uppercase text-espresso-500 mb-2">
+                Green Forest
+              </p>
+              <h1
+                id="product-heading"
+                className="font-serif font-semibold text-espresso-900 mb-4"
+                style={{ fontSize: "clamp(1.5rem, 2.5vw, 2rem)" }}
+              >
+                {product.name}
+              </h1>
+              <p className="text-espresso-600 leading-relaxed mb-8" style={{ fontSize: "0.9375rem" }}>
+                {product.description}
+              </p>
+
+              {/* 스펙 테이블 */}
+              <div className="bg-espresso-50 rounded-xl border border-espresso-200 overflow-hidden mb-8">
+                <dl className="divide-y divide-espresso-200">
+                  {[
+                    { label: "두께", value: `${product.thickness}mm` },
+                    { label: "폭", value: `${product.width}mm` },
+                    { label: "길이", value: `${product.length}mm` },
+                    { label: "마감", value: FINISH_LABEL[product.finish] ?? product.finish },
+                    { label: "컬러", value: product.colorTone ?? "-" },
+                  ].map(({ label, value }) => (
+                    <div key={label} className="flex px-5 py-3.5">
+                      <dt className="w-24 text-sm font-semibold text-espresso-700 shrink-0">{label}</dt>
+                      <dd className="text-sm text-espresso-600">{value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+
+              {/* 특징 목록 */}
+              <ul className="space-y-2 mb-8" role="list">
+                {product.features.map((feat) => (
+                  <li key={feat} className="flex items-center gap-2.5 text-sm text-espresso-700">
+                    <svg className="w-4 h-4 text-espresso-500 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    {feat}
+                  </li>
+                ))}
+              </ul>
+
+              {/* CTA */}
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <Link
+                  href="/contact"
+                  className={cn(
+                    "flex-1 inline-flex items-center justify-center",
+                    "px-6 py-3.5 rounded-lg",
+                    "bg-espresso-800 text-espresso-50",
+                    "text-sm font-semibold",
+                    "hover:bg-espresso-900 transition-colors duration-200",
+                    "focus-visible:outline-2 focus-visible:outline-ring"
+                  )}
+                >
+                  이 제품 문의하기
+                </Link>
+                <Link
+                  href="/products"
+                  className={cn(
+                    "flex-1 inline-flex items-center justify-center",
+                    "px-6 py-3.5 rounded-lg",
+                    "border border-espresso-300 text-espresso-700",
+                    "text-sm font-medium",
+                    "hover:bg-espresso-100 transition-colors duration-200",
+                    "focus-visible:outline-2 focus-visible:outline-ring"
+                  )}
+                >
+                  갤러리로 돌아가기
+                </Link>
+              </div>
+            </div>
+          </div>
+        </Container>
       </article>
     </>
   );
