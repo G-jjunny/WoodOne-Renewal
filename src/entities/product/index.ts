@@ -11,4 +11,14 @@ export type {
   ProductImage,
   ProductCategory,
   ProductFinish,
+  ProductBrand,
+  GreenForestSizeCategory,
 } from "./model/product.types";
+
+export {
+  greenForestProducts,
+  getProductsBySizeCategory,
+  getProductBySlug,
+  toProductSummary,
+  GREEN_FOREST_SIZE_CATEGORIES,
+} from "./model/green-forest.data";

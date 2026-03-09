@@ -6,28 +6,19 @@
  *
  * 우선순위(priority) 설계 원칙:
  *   1.0 — 홈: 가장 중요한 단일 진입점
- *   0.8 — 제품 목록 / 제품 상세: 전환 목적 핵심 페이지
- *   0.7 — 시공 사례: 구매 의향 유저의 탐색 페이지
- *   0.6 — 회사 소개: 신뢰도 형성 페이지
- *   0.5 — 문의하기: 전환 페이지 (중복 리드 방지)
- *
- * changeFrequency 설계 원칙:
- *   - 홈/제품 목록: weekly (프로모션/신제품 업데이트 주기)
- *   - 제품 상세: monthly (제품 스펙은 자주 안 바뀜)
- *   - 시공 사례: monthly (새 사례 추가 주기)
- *   - 소개/문의: yearly (콘텐츠 변경 거의 없음)
+ *   0.8 — 제품 갤러리 / 제품 상세: 전환 목적 핵심 페이지
+ *   0.7 — 회사 소개: 신뢰도 형성 페이지
+ *   0.6 — 찾아오시는 길: 방문/접근성 정보
+ *   0.5 — 문의하기: 전환 페이지
  */
 
 import type { MetadataRoute } from "next";
 import { siteConfig } from "@/shared/config/site";
+import { greenForestProducts } from "@/entities/product";
 
-// 빌드 시점 기준 날짜 (ISR 사용 시 revalidate 설정으로 최신화)
-const SITE_LAST_MODIFIED = new Date("2026-03-01");
+const SITE_LAST_MODIFIED = new Date("2026-03-06");
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  /* ----------------------------------------------------------
-     정적 라우트
-     ---------------------------------------------------------- */
   const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: siteConfig.url,
@@ -42,13 +33,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
-      url: `${siteConfig.url}/projects`,
+      url: `${siteConfig.url}/about`,
       lastModified: SITE_LAST_MODIFIED,
-      changeFrequency: "monthly",
+      changeFrequency: "yearly",
       priority: 0.7,
     },
     {
-      url: `${siteConfig.url}/about`,
+      url: `${siteConfig.url}/location`,
       lastModified: SITE_LAST_MODIFIED,
       changeFrequency: "yearly",
       priority: 0.6,
@@ -61,26 +52,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  /* ----------------------------------------------------------
-     동적 라우트: 제품 상세 (/products/[slug])
-     TODO: CMS/DB 연동 후 아래 주석을 해제하고 실제 데이터로 교체하세요.
-
-     예시 코드:
-     const products = await fetch(`${process.env.API_URL}/products`, {
-       next: { revalidate: 3600 },
-     }).then((r) => r.json());
-
-     const productRoutes: MetadataRoute.Sitemap = products.map((p: { slug: string; updatedAt: string }) => ({
-       url: `${siteConfig.url}/products/${p.slug}`,
-       lastModified: new Date(p.updatedAt),
-       changeFrequency: "monthly" as const,
-       priority: 0.8,
-     }));
-
-     return [...staticRoutes, ...productRoutes];
-     ---------------------------------------------------------- */
-  const productRoutes: MetadataRoute.Sitemap = [];
-  // TODO: 위 예시 코드 참고하여 실제 제품 URL 목록을 채워 넣으세요.
+  // Green Forest 제품 상세 페이지 동적 라우트
+  const productRoutes: MetadataRoute.Sitemap = greenForestProducts.map((p) => ({
+    url: `${siteConfig.url}/products/${p.slug}`,
+    lastModified: SITE_LAST_MODIFIED,
+    changeFrequency: "monthly" as const,
+    priority: 0.8,
+  }));
 
   return [...staticRoutes, ...productRoutes];
 }
