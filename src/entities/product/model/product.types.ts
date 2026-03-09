@@ -24,14 +24,16 @@ export type ProductFinish =
 /**
  * Green Forest 제품 사이즈 카테고리
  * 원목 사이즈 기준 필터링에 사용 (mm 단위 표기)
+ * JSON 데이터 파일의 line 값과 1:1 대응 (예: line: 70 → "70mm")
  */
 export type GreenForestSizeCategory =
+  | "70mm"    // 70mm 폭 시리즈
   | "90mm"    // 90mm 폭 시리즈
-  | "120mm"   // 120mm 폭 시리즈
+  | "125mm"   // 125mm 폭 시리즈
   | "150mm"   // 150mm 폭 시리즈
-  | "180mm"   // 180mm 폭 시리즈
+  | "165mm"   // 165mm 폭 시리즈
   | "190mm"   // 190mm 폭 시리즈
-  | "220mm";  // 220mm 폭 시리즈
+  | "240mm";  // 240mm 폭 시리즈
 
 export type Product = {
   id: string;
