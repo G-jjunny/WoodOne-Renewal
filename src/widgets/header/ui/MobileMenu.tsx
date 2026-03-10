@@ -59,7 +59,7 @@ export function MobileMenu({ navItems }: MobileMenuProps) {
         aria-controls="mobile-nav"
         className={cn(
           "flex items-center justify-center w-10 h-10 rounded-md",
-          "text-foreground/70 hover:text-foreground hover:bg-wood-200",
+          "text-foreground/70 hover:text-foreground hover:bg-espresso-200",
           "transition-colors duration-150",
           "focus-visible:outline-2 focus-visible:outline-ring"
         )}
@@ -103,7 +103,7 @@ export function MobileMenu({ navItems }: MobileMenuProps) {
                 aria-label="메뉴 닫기"
                 className={cn(
                   "flex items-center justify-center w-8 h-8 rounded-md",
-                  "text-muted-foreground hover:text-foreground hover:bg-wood-200",
+                  "text-muted-foreground hover:text-foreground hover:bg-espresso-200",
                   "transition-colors duration-150"
                 )}
               >
@@ -121,7 +121,7 @@ export function MobileMenu({ navItems }: MobileMenuProps) {
                     className={cn(
                       "flex items-center px-4 py-3 rounded-md",
                       "text-base font-medium text-foreground/80",
-                      "hover:text-foreground hover:bg-wood-100",
+                      "hover:text-foreground hover:bg-espresso-100",
                       "transition-colors duration-150"
                     )}
                   >
@@ -141,7 +141,7 @@ export function MobileMenu({ navItems }: MobileMenuProps) {
                   "px-6 py-3 rounded-md",
                   "bg-primary text-primary-foreground",
                   "text-sm font-medium",
-                  "hover:bg-wood-800 transition-colors duration-150"
+                  "hover:bg-espresso-800 transition-colors duration-150"
                 )}
               >
                 무료 상담 문의
