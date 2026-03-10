@@ -12,6 +12,7 @@
  */
 
 import { siteConfig } from "@/shared/config/site";
+import { companyInfo } from "@/shared/config/company";
 import type { JsonLdSchema } from "@/shared/ui/json-ld";
 
 /* ============================================================
@@ -32,18 +33,21 @@ export const organizationSchema: JsonLdSchema = {
     caption: `${siteConfig.name} 로고`,
   },
   description: siteConfig.description,
-  foundingDate: "1994",
-  // 전화번호/주소는 실제 영업 정보 확인 후 업데이트 필요
+  foundingDate: "1996",
   contactPoint: {
     "@type": "ContactPoint",
+    telephone: companyInfo.tel,
+    email: companyInfo.email,
     contactType: "customer service",
     areaServed: "KR",
     availableLanguage: "Korean",
   },
   address: {
     "@type": "PostalAddress",
+    streetAddress: companyInfo.address.full,
+    addressLocality: companyInfo.address.sigungu,
+    addressRegion: companyInfo.address.sido,
     addressCountry: "KR",
-    addressRegion: "서울",
   },
   sameAs: [
     // 소셜 미디어 URL 확정 후 채워 넣으세요

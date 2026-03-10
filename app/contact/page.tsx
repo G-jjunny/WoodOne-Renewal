@@ -11,6 +11,7 @@
 
 import type { Metadata } from "next";
 import { siteConfig } from "@/shared/config/site";
+import { companyInfo } from "@/shared/config/company";
 import { JsonLd } from "@/shared/ui/json-ld";
 import { createBreadcrumbSchema } from "@/shared/config/schema";
 import { Container } from "@/shared/ui/container";
@@ -48,12 +49,11 @@ const breadcrumbSchema = createBreadcrumbSchema([
   { name: "문의하기", href: "/contact" },
 ]);
 
-/* 연락처 정보 상수 — Footer.tsx의 COMPANY_INFO와 동기화 필요 */
 const CONTACT_INFO = [
   {
     label: "전화",
-    value: "02-1234-5678",
-    href: "tel:021234567",
+    value: companyInfo.tel,
+    href: `tel:${companyInfo.tel.replace(/-/g, "")}`,
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" aria-hidden="true">
         <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
@@ -62,8 +62,8 @@ const CONTACT_INFO = [
   },
   {
     label: "이메일",
-    value: "info@woodone.co.kr",
-    href: "mailto:info@woodone.co.kr",
+    value: companyInfo.email,
+    href: `mailto:${companyInfo.email}`,
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" aria-hidden="true">
         <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
@@ -72,7 +72,7 @@ const CONTACT_INFO = [
   },
   {
     label: "주소",
-    value: "서울특별시 강남구 테헤란로 123",
+    value: `${companyInfo.address.sido} ${companyInfo.address.full}`,
     href: "/location",
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" aria-hidden="true">
@@ -81,7 +81,7 @@ const CONTACT_INFO = [
       </svg>
     ),
   },
-] as const;
+];
 
 export default function ContactPage() {
   return (
@@ -162,15 +162,15 @@ export default function ContactPage() {
                 <dl className="space-y-1 text-sm text-espresso-600">
                   <div className="flex justify-between">
                     <dt>평일</dt>
-                    <dd>09:00 — 18:00</dd>
+                    <dd>{companyInfo.hours.weekday}</dd>
                   </div>
                   <div className="flex justify-between">
                     <dt>토요일</dt>
-                    <dd>09:00 — 13:00</dd>
+                    <dd>{companyInfo.hours.saturday}</dd>
                   </div>
                   <div className="flex justify-between text-espresso-400">
                     <dt>일요일 / 공휴일</dt>
-                    <dd>휴무</dd>
+                    <dd>{companyInfo.hours.holiday}</dd>
                   </div>
                 </dl>
               </div>
