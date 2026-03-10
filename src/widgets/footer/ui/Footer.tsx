@@ -14,6 +14,7 @@
 import Link from "next/link";
 import { Container } from "@/shared/ui/container";
 import { siteConfig } from "@/shared/config/site";
+import { companyInfo } from "@/shared/config/company";
 import { cn } from "@/shared/lib/utils";
 
 const FOOTER_LINKS = [
@@ -42,15 +43,6 @@ const FOOTER_LINKS = [
   },
 ] as const;
 
-const COMPANY_INFO = {
-  name: "주식회사 우드원",
-  ceoName: "대표이사 홍길동",           // 실제 정보로 교체 필요
-  businessNumber: "123-45-67890",       // 실제 사업자등록번호로 교체 필요
-  address: "서울특별시 강남구 테헤란로 123, 우드원빌딩 5층", // 실제 주소로 교체 필요
-  tel: "02-1234-5678",                  // 실제 전화번호로 교체 필요
-  fax: "02-1234-5679",                  // 실제 팩스번호로 교체 필요
-  email: "info@woodone.co.kr",          // 실제 이메일로 교체 필요
-} as const;
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -210,31 +202,31 @@ export function Footer() {
             )}
             style={{ fontSize: "var(--text-overline)" }}
           >
-            <span>{COMPANY_INFO.name}</span>
+            <span>{companyInfo.legalName}</span>
             <span className="hidden sm:inline text-espresso-900" aria-hidden="true">|</span>
-            <span>대표: {COMPANY_INFO.ceoName}</span>
+            <span>대표: {companyInfo.ceo}</span>
             <span className="hidden sm:inline text-espresso-900" aria-hidden="true">|</span>
-            <span>사업자등록번호: {COMPANY_INFO.businessNumber}</span>
+            <span>사업자등록번호: {companyInfo.businessNumber}</span>
             <span className="hidden sm:inline text-espresso-900" aria-hidden="true">|</span>
-            <span>{COMPANY_INFO.address}</span>
+            <span>{companyInfo.address.sido} {companyInfo.address.full}</span>
             <span className="hidden sm:inline text-espresso-900" aria-hidden="true">|</span>
             <span>
               <span className="sr-only">전화: </span>
               <a
-                href={`tel:${COMPANY_INFO.tel.replace(/-/g, "")}`}
+                href={`tel:${companyInfo.tel.replace(/-/g, "")}`}
                 className="hover:text-neutral-400 transition-colors duration-[150ms]"
               >
-                {COMPANY_INFO.tel}
+                {companyInfo.tel}
               </a>
             </span>
             <span className="hidden sm:inline text-espresso-900" aria-hidden="true">|</span>
             <span>
               <span className="sr-only">이메일: </span>
               <a
-                href={`mailto:${COMPANY_INFO.email}`}
+                href={`mailto:${companyInfo.email}`}
                 className="hover:text-neutral-400 transition-colors duration-[150ms]"
               >
-                {COMPANY_INFO.email}
+                {companyInfo.email}
               </a>
             </span>
           </address>
@@ -244,7 +236,7 @@ export function Footer() {
               className="text-espresso-900"
               style={{ fontSize: "var(--text-overline)" }}
             >
-              &copy; {currentYear} {COMPANY_INFO.name}. All rights reserved.
+              &copy; {currentYear} {companyInfo.legalName}. All rights reserved.
             </p>
             <nav aria-label="법적 링크" className="flex items-center gap-4">
               <Link

@@ -13,6 +13,7 @@
 
 import Link from "next/link";
 import { Container } from "@/shared/ui/container";
+import { companyInfo } from "@/shared/config/company";
 import { cn } from "@/shared/lib/utils";
 
 export function CtaSection() {
@@ -85,7 +86,7 @@ export function CtaSection() {
             style={{ borderTop: "1px solid oklch(0.28 0.055 45 / 0.4)" }}
           >
             <a
-              href="tel:02-1234-5678"
+              href={`tel:${companyInfo.tel.replace(/-/g, "")}`}
               className={cn(
                 "flex items-center gap-3",
                 "transition-colors duration-[150ms]",
@@ -103,7 +104,7 @@ export function CtaSection() {
               >
                 Tel
               </span>
-              02-1234-5678
+              {companyInfo.tel}
             </a>
             <span
               className="hidden sm:inline"
@@ -113,7 +114,7 @@ export function CtaSection() {
               /
             </span>
             <a
-              href="mailto:info@woodone.co.kr"
+              href={`mailto:${companyInfo.email}`}
               className={cn(
                 "flex items-center gap-3",
                 "transition-colors duration-[150ms]",
@@ -131,7 +132,7 @@ export function CtaSection() {
               >
                 Email
               </span>
-              info@woodone.co.kr
+              {companyInfo.email}
             </a>
           </div>
         </div>

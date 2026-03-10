@@ -14,6 +14,7 @@
 
 import type { Metadata } from "next";
 import { siteConfig } from "@/shared/config/site";
+import { companyInfo } from "@/shared/config/company";
 import { JsonLd } from "@/shared/ui/json-ld";
 import { createBreadcrumbSchema } from "@/shared/config/schema";
 import { Container } from "@/shared/ui/container";
@@ -85,7 +86,7 @@ const TRANSPORT_INFO = [
       </svg>
     ),
     lines: [
-      "네비게이션 검색: 우드원 또는 서울시 강남구 테헤란로 123",
+      `네비게이션 검색: ${companyInfo.name} 또는 ${companyInfo.address.sido} ${companyInfo.address.full}`,
       "건물 지하 주차장 이용 가능 (2시간 무료)",
     ],
   },
@@ -133,10 +134,10 @@ export default function LocationPage() {
                 실제 우드원 좌표로 업데이트 필요
               */}
               <KakaoMap
-                lat={37.5012}
-                lng={127.0396}
+                lat={companyInfo.map.lat || 37.5012}
+                lng={companyInfo.map.lng || 127.0396}
                 level={4}
-                markerTitle="우드원"
+                markerTitle={companyInfo.name}
                 className="h-[400px] lg:h-[520px]"
               />
             </div>
@@ -154,25 +155,21 @@ export default function LocationPage() {
                     "bg-espresso-50 border border-espresso-200"
                   )}
                 >
-                  <p className="text-sm font-semibold text-espresso-800 mb-1">주식회사 우드원</p>
+                  <p className="text-sm font-semibold text-espresso-800 mb-1">{companyInfo.legalName}</p>
                   <p className="text-sm text-espresso-700 leading-relaxed">
-                    서울특별시 강남구 테헤란로 123
-                    <br />
-                    우드원빌딩 5층
-                    <br />
-                    (우편번호: 06234)
+                    {companyInfo.address.sido} {companyInfo.address.full}
                   </p>
                   <div className="mt-3 pt-3 border-t border-espresso-200 space-y-1">
                     <p className="text-sm text-espresso-600">
                       <span className="font-medium text-espresso-700">Tel.</span>{" "}
-                      <a href="tel:021234567" className="hover:text-espresso-900 transition-colors duration-150">
-                        02-1234-5678
+                      <a href={`tel:${companyInfo.tel.replace(/-/g, "")}`} className="hover:text-espresso-900 transition-colors duration-150">
+                        {companyInfo.tel}
                       </a>
                     </p>
                     <p className="text-sm text-espresso-600">
                       <span className="font-medium text-espresso-700">Email.</span>{" "}
-                      <a href="mailto:info@woodone.co.kr" className="hover:text-espresso-900 transition-colors duration-150">
-                        info@woodone.co.kr
+                      <a href={`mailto:${companyInfo.email}`} className="hover:text-espresso-900 transition-colors duration-150">
+                        {companyInfo.email}
                       </a>
                     </p>
                   </div>
@@ -190,9 +187,9 @@ export default function LocationPage() {
                   )}
                 >
                   {[
-                    { day: "평일", time: "09:00 — 18:00" },
-                    { day: "토요일", time: "09:00 — 13:00" },
-                    { day: "일요일 / 공휴일", time: "휴무" },
+                    { day: "평일", time: companyInfo.hours.weekday },
+                    { day: "토요일", time: companyInfo.hours.saturday },
+                    { day: "일요일 / 공휴일", time: companyInfo.hours.holiday },
                   ].map(({ day, time }) => (
                     <div key={day} className="flex justify-between text-sm">
                       <dt className={cn(

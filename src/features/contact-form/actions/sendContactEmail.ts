@@ -14,6 +14,7 @@
  */
 
 import nodemailer from "nodemailer";
+import { companyInfo } from "@/shared/config/company";
 import type { ContactFormData, ContactFormState } from "../model/contact.types";
 
 /** 서버 측 폼 유효성 검사 */
@@ -67,7 +68,7 @@ export async function sendContactEmail(
   const smtpPort = parseInt(process.env.CONTACT_SMTP_PORT ?? "587", 10);
   const smtpUser = process.env.CONTACT_SMTP_USER;
   const smtpPass = process.env.CONTACT_SMTP_PASS;
-  const toEmail  = process.env.CONTACT_TO_EMAIL ?? "info@woodone.co.kr";
+  const toEmail  = process.env.CONTACT_TO_EMAIL ?? companyInfo.email;
 
   if (!smtpHost || !smtpUser || !smtpPass) {
     // 개발 환경: SMTP 미설정 시 콘솔 출력 (운영에서는 실제 에러 반환)
